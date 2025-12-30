@@ -1,0 +1,47 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: api-gateway
+
+  # CONFIGURACIÓN DE SEGURIDAD (Validar token antes de enrutar)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Usamos variables de entorno para Docker
+          issuer-uri: ${ISSUER_URI_GATEWAY:http://localhost:8180/realms/tuxtepec-gob}
+          jwk-set-uri: ${JWK_SET_URI_GATEWAY:http://localhost:8180/realms/tuxtepec-gob/protocol/openid-connect/certs}
+
+  # CONFIGURACIÓN DE RUTAS
+  cloud:
+    gateway:
+      # CORS GLOBAL (Vital para que Angular no llore)
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:4200" # Frontend
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+      routes:
+        # RUTA 1: MS-PADRON
+        - id: padron-route
+          # Destino: Usamos el nombre del servicio en Docker
+          uri: http://ms-padron-unico:8080
+          predicates:
+            # Atrapa cualquier URL que empiece con /api/v1/sujetos-pasivos
+            # o cualquier otra ruta que pertenezca a ese microservicio
+            - Path=/api/v1/sujetos-pasivos/**, /api/v1/predios/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
