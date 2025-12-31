@@ -35,7 +35,7 @@ spring:
         # RUTA 1: MS-PADRON
         - id: padron-route
           # Destino: Usamos el nombre del servicio en Docker
-          uri: http://ms-padron-unico:8080
+          uri: ${URI_PADRON:http://ms-padron-unico:8080}
           predicates:
             # Atrapa cualquier URL que empiece con /api/v1/sujetos-pasivos
             # o cualquier otra ruta que pertenezca a ese microservicio
