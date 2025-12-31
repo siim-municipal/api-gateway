@@ -1,0 +1,38 @@
+services:
+  api-gateway:
+    # Construir usando el Dockerfile del directorio actual
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: api-gateway
+    restart: always
+
+    # Exponemos el 8080 interno.
+    # Dokploy/Traefik tomará este puerto para asignarle el dominio.
+    ports:
+      - "8080:8080"
+
+    environment:
+      # --- CONFIGURACIÓN BASE ---
+      # Forzamos a Spring a usar el puerto 8080 para coincidir con el Dockerfile
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=prod
+
+      # --- SEGURIDAD (KEYCLOAK) ---
+      # Estas variables las definimos en Dokploy
+      - ISSUER_URI_GATEWAY=${ISSUER_URI_GATEWAY}
+      - JWK_SET_URI_GATEWAY=${JWK_SET_URI_GATEWAY}
+
+      # --- RUTAS A MICROSERVICIOS ---
+      # URL donde vive el padrón (interno o dominio)
+      - URI_PADRON=${URI_PADRON}
+
+    # Red para hablar con otros contenedores (opcional si usas dominios públicos)
+    networks:
+      - siim-network
+
+# Definimos la red para que se vean entre ellos
+networks:
+  siim-network:
+    driver: bridge
