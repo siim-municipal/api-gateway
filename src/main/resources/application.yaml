@@ -11,8 +11,8 @@ spring:
       resourceserver:
         jwt:
           # Usamos variables de entorno para Docker
-          issuer-uri: ${ISSUER_URI_GATEWAY:http://localhost:8180/realms/tuxtepec-gob}
-          jwk-set-uri: ${JWK_SET_URI_GATEWAY:http://localhost:8180/realms/tuxtepec-gob/protocol/openid-connect/certs}
+          issuer-uri: ${ISSUER_URI_KEYCLOAK:http://localhost:8180/realms/tuxtepec-gob}
+          jwk-set-uri: ${JWK_SET_URI_KEYCLOAK:http://keycloak:8180/realms/tuxtepec-gob/protocol/openid-connect/certs}
 
   # CONFIGURACIÓN DE RUTAS
   cloud:
@@ -35,11 +35,13 @@ spring:
         # RUTA 1: MS-PADRON
         - id: padron-route
           # Destino: Usamos el nombre del servicio en Docker
-          uri: ${URI_PADRON:http://ms-padron-unico:8080}
+          uri: ${URI_PADRON:http://ms-padron-app:8080}
           predicates:
-            # Atrapa cualquier URL que empiece con /api/v1/sujetos-pasivos
-            # o cualquier otra ruta que pertenezca a ese microservicio
             - Path=/api/v1/sujetos-pasivos/**, /api/v1/predios/**
+        - id: calculo-impuestos
+          uri: ${URI_CALCULO:http://ms-calculo-app:8080}
+          predicates:
+            - Path=/api/v1/calculos/**
 
 logging:
   level:
