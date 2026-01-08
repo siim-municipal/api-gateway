@@ -2,53 +2,69 @@ name: Java CI
 
 on:
   push:
-    branches: ["main", "develop", "qa"]
+    branches: [ "main", "develop", "qa" ]
   pull_request:
-    branches: ["main", "develop", "qa"]
+    branches: [ "main", "develop", "qa" ]
+
+permissions:
+  contents: read
+  security-events: write
 
 jobs:
   build:
+    name: Build, Test & Quality
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      # Checkout
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      # Java 21
       - name: Set up Java 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: "21"
           distribution: temurin
+          java-version: "21"
+          cache: maven
 
-      - name: Cache Maven
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
+      # Build + Tests + Coverage
+      - name: Build, Test & Coverage
+        run: mvn clean verify --no-transfer-progress
 
-      - name: Build + Test
-        run: mvn test --no-transfer-progress
-
-      - name: Generate coverage report
-        run: mvn jacoco:report
-
-      - name: CodeQL analysis
-        uses: github/codeql-action/analyze@v2
-        with:
-          languages: java
-
+      # SpotBugs (calidad + bugs)
       - name: SpotBugs
-        run: mvn com.github.spotbugs:spotbugs-maven-plugin:check
+        run: mvn spotbugs:check
 
+      # Checkstyle (estilo)
       - name: Checkstyle
         run: mvn checkstyle:check
 
+      # PMD (code smells)
       - name: PMD
         run: mvn pmd:check
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+      # Subir reporte de cobertura
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
+          name: jacoco-report
           path: target/site/jacoco
+          overwrite: true
+
+  # Job separado para seguridad
+  codeql:
+    name: CodeQL Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+
+      - name: Autobuild
+        uses: github/codeql-action/autob
