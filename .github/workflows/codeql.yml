@@ -1,0 +1,54 @@
+name: Java CI
+
+on:
+  push:
+    branches: ["main", "develop", "qa"]
+  pull_request:
+    branches: ["main", "develop", "qa"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: "21"
+          distribution: temurin
+
+      - name: Cache Maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: Build + Test
+        run: mvn test --no-transfer-progress
+
+      - name: Generate coverage report
+        run: mvn jacoco:report
+
+      - name: CodeQL analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          languages: java
+
+      - name: SpotBugs
+        run: mvn com.github.spotbugs:spotbugs-maven-plugin:check
+
+      - name: Checkstyle
+        run: mvn checkstyle:check
+
+      - name: PMD
+        run: mvn pmd:check
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: target/site/jacoco
