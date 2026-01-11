@@ -5,12 +5,11 @@ spring:
   application:
     name: api-gateway
 
-  # CONFIGURACIÓN DE SEGURIDAD (Validar token antes de enrutar)
+  # SEGURIDAD
   security:
     oauth2:
       resourceserver:
         jwt:
-          # Usamos variables de entorno para Docker
           issuer-uri: ${ISSUER_URI_KEYCLOAK:http://localhost:8180/realms/tuxtepec-gob}
           jwk-set-uri: ${JWK_SET_URI_KEYCLOAK:http://keycloak:8180/realms/tuxtepec-gob/protocol/openid-connect/certs}
 
@@ -34,13 +33,13 @@ spring:
 
           # RUTAS
           routes:
-            # RUTA 1: MS-PADRON
+            # MS-PADRON
             - id: padron-route
               uri: ${URI_PADRON:http://ms-padron-app:8080}
               predicates:
                 - Path=/api/v1/sujetos-pasivos/**, /api/v1/predios/**, /api/v1/licencias/**
 
-            # RUTA 2: MS-CALCULO
+            # MS-CALCULO
             - id: calculo-impuestos
               uri: ${URI_CALCULO:http://ms-calculo-app:8080}
               predicates:
@@ -48,5 +47,5 @@ spring:
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: INFO
+    org.springframework.security: INFO
