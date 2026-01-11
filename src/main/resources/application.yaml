@@ -14,34 +14,37 @@ spring:
           issuer-uri: ${ISSUER_URI_KEYCLOAK:http://localhost:8180/realms/tuxtepec-gob}
           jwk-set-uri: ${JWK_SET_URI_KEYCLOAK:http://keycloak:8180/realms/tuxtepec-gob/protocol/openid-connect/certs}
 
-  # CONFIGURACIÓN DE RUTAS
   cloud:
     gateway:
-      # CORS GLOBAL (Vital para que Angular no llore)
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "http://localhost:4200" # Frontend
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
-            allowCredentials: true
+      server:
+        webflux:
+          # CORS GLOBAL
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "http://localhost:4200"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders: "*"
+                allowCredentials: true
 
-      routes:
-        # RUTA 1: MS-PADRON
-        - id: padron-route
-          # Destino: Usamos el nombre del servicio en Docker
-          uri: ${URI_PADRON:http://ms-padron-app:8080}
-          predicates:
-            - Path=/api/v1/sujetos-pasivos/**, /api/v1/predios/**
-        - id: calculo-impuestos
-          uri: ${URI_CALCULO:http://ms-calculo-app:8080}
-          predicates:
-            - Path=/api/v1/calculos/**
+          # RUTAS
+          routes:
+            # RUTA 1: MS-PADRON
+            - id: padron-route
+              uri: ${URI_PADRON:http://ms-padron-app:8080}
+              predicates:
+                - Path=/api/v1/sujetos-pasivos/**, /api/v1/predios/**, /api/v1/licencias/**
+
+            # RUTA 2: MS-CALCULO
+            - id: calculo-impuestos
+              uri: ${URI_CALCULO:http://ms-calculo-app:8080}
+              predicates:
+                - Path=/api/v1/calculos/**
 
 logging:
   level:
