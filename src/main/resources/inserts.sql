@@ -54,12 +54,23 @@ VALUES (
            true
        );
 
--- 3. MS-AGUA (Ejemplo si existiera)
+-- 3. MS-AGUA
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
 VALUES (
            'ms-agua',
            'lb://ms-agua',
            '[{"name":"Path", "args":{"pattern":"/api/v1/agua/**"}}]',
+           '[]',
+           0,
+           true
+       );
+
+-- 3. MS-SECURITY
+INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
+VALUES (
+           'security-users',
+           'lb://ms-security',
+           '[{"name":"Path", "args":{"pattern":"/api/v1/users/**"}}]',
            '[]',
            0,
            true
