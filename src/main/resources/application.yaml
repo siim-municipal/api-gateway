@@ -5,19 +5,17 @@ spring:
   application:
     name: api-gateway
 
-  # SEGURIDAD
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${ISSUER_URI_KEYCLOAK:http://localhost:8180/realms/tuxtepec-gob}
-          jwk-set-uri: ${JWK_SET_URI_KEYCLOAK:http://keycloak:8180/realms/tuxtepec-gob/protocol/openid-connect/certs}
+  # 1. CONEXIÓN REACTIVA (Para el flujo del Gateway - R2DBC)
+  r2dbc:
+    url: ${URL_BD_GATEWAY:r2dbc:postgresql://postgres-db:5432/gateway_db}
+    username: ${USER_NAME_BD}
+    password: ${PASSWORD_BD}
 
+  # 4. CONFIGURACIÓN GATEWAY
   cloud:
     gateway:
       server:
         webflux:
-          # CORS GLOBAL
           globalcors:
             cors-configurations:
               '[/**]':
@@ -30,20 +28,23 @@ spring:
                   - OPTIONS
                 allowedHeaders: "*"
                 allowCredentials: true
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
 
-          # RUTAS
-          routes:
-            # MS-PADRON
-            - id: padron-route
-              uri: ${URI_PADRON:http://ms-padron-app:8080}
-              predicates:
-                - Path=/api/v1/sujetos-pasivos/**, /api/v1/predios/**, /api/v1/licencias/**
+  # SEGURIDAD
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${ISSUER_URI_KEYCLOAK:http://localhost:8180/realms/tuxtepec-gob}
+          jwk-set-uri: ${JWK_SET_URI_KEYCLOAK:http://keycloak:8180/realms/tuxtepec-gob/protocol/openid-connect/certs}
 
-            # MS-CALCULO
-            - id: calculo-impuestos
-              uri: ${URI_CALCULO:http://ms-calculo-app:8080}
-              predicates:
-                - Path=/api/v1/calculos/**
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
 
 logging:
   level:
