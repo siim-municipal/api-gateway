@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="001-crear-tabla-gateway-routes" author="Hugo Cobos">
+        <createTable tableName="gateway_routes">
+            <column name="route_id" type="VARCHAR(100)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="uri" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="predicates" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="filters" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="order_num" type="INT" defaultValueNumeric="0"/>
+
+            <column name="enabled" type="BOOLEAN" defaultValueBoolean="true"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

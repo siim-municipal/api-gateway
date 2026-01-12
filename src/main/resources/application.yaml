@@ -5,26 +5,38 @@ spring:
   application:
     name: api-gateway
 
-    cloud:
-      gateway:
-        discovery:
-          locator:
-            enabled: true
-            lower-case-service-id: true # Permite usar /ms-padron-unico en vez de /MS-PADRON-UNICO
+  # 1. CONEXIÓN REACTIVA (Para el flujo del Gateway - R2DBC)
+  r2dbc:
+    url: ${URL_BD_GATEWAY:r2dbc:postgresql://postgres-db:5432/gateway_db}
+    username: ${USER_NAME_BD}
+    password: ${PASSWORD_BD}
 
-  # SEGURIDAD
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${ISSUER_URI_KEYCLOAK:http://localhost:8180/realms/tuxtepec-gob}
-          jwk-set-uri: ${JWK_SET_URI_KEYCLOAK:http://keycloak:8180/realms/tuxtepec-gob/protocol/openid-connect/certs}
+  # 2. CONEXIÓN JDBC (SOLO para Liquibase - Bloqueante)
+  datasource:
+    url: ${URL_BD_GATEWAY_JDBC:jdbc:postgresql://postgres-db:5432/gateway_db}
+    username: ${USER_NAME_BD}
+    password: ${PASSWORD_BD}
+    driver-class-name: org.postgresql.Driver
 
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  # 3. CONFIGURACIÓN LIQUIBASE
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+
+  # 4. CONFIGURACIÓN GATEWAY
   cloud:
     gateway:
       server:
         webflux:
-          # CORS GLOBAL
           globalcors:
             cors-configurations:
               '[/**]':
@@ -37,28 +49,25 @@ spring:
                   - OPTIONS
                 allowedHeaders: "*"
                 allowCredentials: true
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
 
-          # RUTAS
-          routes:
-            # MS-PADRON
-            - id: padron-route
-              uri: ${URI_PADRON:http://ms-padron-app:8080}
-              predicates:
-                - Path=/api/v1/sujetos-pasivos/**, /api/v1/predios/**, /api/v1/licencias/**
-
-            # MS-CALCULO
-            - id: calculo-impuestos
-              uri: ${URI_CALCULO:http://ms-calculo-app:8080}
-              predicates:
-                - Path=/api/v1/calculos/**
+  # SEGURIDAD
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${ISSUER_URI_KEYCLOAK:http://localhost:8180/realms/tuxtepec-gob}
+          jwk-set-uri: ${JWK_SET_URI_KEYCLOAK:http://keycloak:8180/realms/tuxtepec-gob/protocol/openid-connect/certs}
 
 eureka:
   client:
     service-url:
-      defaultZone: ${URL_EUREKA:http://localhost:8761/eureka/}
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
 
 logging:
   level:
     org.springframework.cloud.gateway: INFO
     org.springframework.security: INFO
-

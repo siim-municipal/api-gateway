@@ -6,11 +6,17 @@ services:
     container_name: api-gateway
     restart: always
     ports:
-      - "8080:8080"
+      - "9090:9090"
 
     environment:
-      - SERVER_PORT=8080
+      - SERVER_PORT=9090
       - SPRING_PROFILES_ACTIVE=${PROFILE_SPRING}
+
+      - URL_BD_GATEWAY=${URL_BD_GATEWAY}
+      - USER_NAME_BD=${USER_NAME_BD}
+      - PASSWORD_BD=${PASSWORD_BD}
+
+      - URL_BD_GATEWAY_JDBC=${URL_BD_GATEWAY_JDBC}
 
       # Seguridad
       - ISSUER_URI_KEYCLOAK=${ISSUER_URI_KEYCLOAK}
@@ -20,8 +26,16 @@ services:
       - URI_PADRON=${URI_PADRON}
       - URI_CALCULO=${URI_CALCULO}
 
+      - EUREKA_URI=${EUREKA_URI}
+
     networks:
       - siim-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9090/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
 networks:
   siim-network:
