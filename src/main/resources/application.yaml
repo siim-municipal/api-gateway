@@ -5,6 +5,13 @@ spring:
   application:
     name: api-gateway
 
+    cloud:
+      gateway:
+        discovery:
+          locator:
+            enabled: true
+            lower-case-service-id: true # Permite usar /ms-padron-unico en vez de /MS-PADRON-UNICO
+
   # SEGURIDAD
   security:
     oauth2:
@@ -45,7 +52,13 @@ spring:
               predicates:
                 - Path=/api/v1/calculos/**
 
+eureka:
+  client:
+    service-url:
+      defaultZone: ${URL_EUREKA:http://localhost:8761/eureka/}
+
 logging:
   level:
     org.springframework.cloud.gateway: INFO
     org.springframework.security: INFO
+
