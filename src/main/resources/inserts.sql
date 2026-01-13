@@ -8,7 +8,7 @@ VALUES (
            '[]',
            0,
            true
-       );
+       )ON CONFLICT (route_id) DO NOTHING;;
 
 -- Ruta para Predios
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
@@ -19,7 +19,7 @@ VALUES (
            '[]',
            0,
            true
-       );
+       )ON CONFLICT (route_id) DO NOTHING;;
 
 -- Ruta para Licencias
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
@@ -30,7 +30,7 @@ VALUES (
            '[]',
            0,
            true
-       );
+       )ON CONFLICT (route_id) DO NOTHING;;
 
 -- Ruta para Catálogos
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
@@ -41,7 +41,7 @@ VALUES (
            '[]',
            0,
            true
-       );
+       )ON CONFLICT (route_id) DO NOTHING;;
 
 -- 2. MS-CALCULO
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
@@ -52,7 +52,7 @@ VALUES (
            '[]',
            0,
            true
-       );
+       )ON CONFLICT (route_id) DO NOTHING;;
 
 -- 3. MS-AGUA
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
@@ -63,7 +63,7 @@ VALUES (
            '[]',
            0,
            true
-       );
+       )ON CONFLICT (route_id) DO NOTHING;;
 
 -- 3. MS-SECURITY
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
@@ -74,4 +74,4 @@ VALUES (
            '[]',
            0,
            true
-       );
+       )ON CONFLICT (route_id) DO NOTHING;;

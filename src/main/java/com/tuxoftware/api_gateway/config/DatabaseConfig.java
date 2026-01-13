@@ -15,8 +15,14 @@ public class DatabaseConfig {
         ConnectionFactoryInitializer initializer = new ConnectionFactoryInitializer();
         initializer.setConnectionFactory(connectionFactory);
 
-        // Carga y ejecuta el archivo schema.sql al inicio
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator(new ClassPathResource("schema.sql"));
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+
+        // 1. Primero crea las tablas
+        populator.addScript(new ClassPathResource("schema.sql"));
+
+        // 2. Luego inserta los datos
+        populator.addScript(new ClassPathResource("inserts.sql"));
+
         initializer.setDatabasePopulator(populator);
 
         return initializer;
