@@ -94,4 +94,14 @@ VALUES (
            '[]',
            0,
            true
-       )ON CONFLICT (route_id) DO NOTHING;;
+       )ON CONFLICT (route_id) DO NOTHING;
+
+INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
+VALUES (
+           'ms-tesoreria-recibos',
+           'lb://ms-tesoreria-recaudacion',
+           '[{"name":"Path", "args":{"pattern":"/api/v1/recibos/**"}}]',
+           '[]',
+           0,
+           true
+       )ON CONFLICT (route_id) DO NOTHING;
