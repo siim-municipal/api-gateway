@@ -41,7 +41,17 @@ VALUES (
            '[]',
            0,
            true
-       )ON CONFLICT (route_id) DO NOTHING;;
+       )ON CONFLICT (route_id) DO NOTHING;
+
+INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
+VALUES (
+           'ms-padron-contribuyentes-predios',
+           'lb://ms-padron-unico',
+           '[{"name":"Path", "args":{"pattern":"/api/v1/propiedades/**"}}]',
+           '[]',
+           0,
+           true
+       )ON CONFLICT (route_id) DO NOTHING;
 
 -- 2. MS-CALCULO
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
