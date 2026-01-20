@@ -8,7 +8,7 @@ VALUES (
            '[]',
            0,
            true
-       )ON CONFLICT (route_id) DO NOTHING;;
+       )ON CONFLICT (route_id) DO NOTHING;
 
 -- Ruta para Predios
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
@@ -19,7 +19,7 @@ VALUES (
            '[]',
            0,
            true
-       )ON CONFLICT (route_id) DO NOTHING;;
+       )ON CONFLICT (route_id) DO NOTHING;
 
 -- Ruta para Licencias
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
@@ -30,7 +30,7 @@ VALUES (
            '[]',
            0,
            true
-       )ON CONFLICT (route_id) DO NOTHING;;
+       )ON CONFLICT (route_id) DO NOTHING;
 
 -- Ruta para Catálogos
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
@@ -62,18 +62,28 @@ VALUES (
            '[]',
            0,
            true
-       )ON CONFLICT (route_id) DO NOTHING;;
+       )ON CONFLICT (route_id) DO NOTHING;
 
 -- 3. MS-AGUA
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
 VALUES (
-           'ms-agua',
+           'ms-agua-lecturas',
            'lb://ms-agua',
-           '[{"name":"Path", "args":{"pattern":"/api/v1/agua/**"}}]',
+           '[{"name":"Path", "args":{"pattern":"/api/v1/lecturas/**"}}]',
            '[]',
            0,
            true
-       )ON CONFLICT (route_id) DO NOTHING;;
+       )ON CONFLICT (route_id) DO NOTHING;
+
+INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
+VALUES (
+           'ms-agua-contratos',
+           'lb://ms-agua',
+           '[{"name":"Path", "args":{"pattern":"/api/v1/contratos/**"}}]',
+           '[]',
+           0,
+           true
+       )ON CONFLICT (route_id) DO NOTHING;
 
 -- 3. MS-SECURITY
 INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
