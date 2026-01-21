@@ -125,3 +125,13 @@ VALUES (
            0,
            true
        )ON CONFLICT (route_id) DO NOTHING;
+
+INSERT INTO gateway_routes (route_id, uri, predicates, filters, order_num, enabled)
+VALUES (
+           'ms-tesoreria-ingresos',
+           'lb://ms-tesoreria-recaudacion',
+           '[{"name":"Path", "args":{"pattern":"/api/v1/ingresos/**"}}]',
+           '[]',
+           0,
+           true
+       )ON CONFLICT (route_id) DO NOTHING;
